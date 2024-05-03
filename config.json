@@ -3,6 +3,7 @@
       {
         "id": "1",
         "video_path": "parking1.mp4",
+        "address": "Satbayev 22, Almaty, Kazakhstan",
         "areas": [
             [[63, 507], [121, 502], [90, 617], [23, 618]],
             [[127, 501], [190, 498], [171, 614], [98, 617]],
@@ -21,6 +22,7 @@
       {
         "id": "2",
         "video_path": "parking2.mp4",
+        "address": "Kazakh National University of Arts 13, Almaty, Kazakhstan",
         "areas": [
             [[86, 331], [154, 301], [256, 359], [169, 383]],
             [[32, 353], [82, 336], [161, 387], [82, 414]],
@@ -33,6 +35,7 @@
       {
         "id": "3",
         "video_path": "parking3.mp4",
+        "address": "KazNU 71, Almaty, Kazakhstan",
         "areas": [
             [[24, 324], [88, 324], [74, 371], [4, 377]],
             [[90, 325], [152, 325], [156, 368], [80, 371]],

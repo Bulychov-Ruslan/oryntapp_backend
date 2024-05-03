@@ -67,7 +67,13 @@ def get_parking_status(parking_id):
     status = parking_statuses.get(parking_id)
     if status is None:
         return jsonify({"error": "Parking not found"}), 404
-    return jsonify({"parking_id": parking_id, "status": status})
+    return jsonify({"parking_id": parking_id, "address": parking['address'], "status": status})
+
+@app.route('/parkings', methods=['GET'])
+def get_parkings_list():
+    parkings_list = [{'id': parking['id'], 'address': parking['address']} for parking in parkings['parkings']]
+    return jsonify(parkings_list)
+
 
 if __name__ == '__main__':
     manager = multiprocessing.Manager()
