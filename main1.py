@@ -16,7 +16,7 @@ with open("coco.txt", "r") as file:
     class_list = file.read().split("\n")
 
 
-with open('config.json', 'r') as f:
+with open('config1.json', 'r') as f:
     parkings = json.load(f)
 
 def process_parking(parking, parking_statuses):
@@ -62,12 +62,25 @@ def process_parking(parking, parking_statuses):
 
 app = Flask(__name__)
 
+def format_parking_status(parking_config, status):
+    rows = parking_config['layout']['rows']
+    formatted_status = []
+    index = 0
+    for row in rows:
+        row_status = status[index:index + row['count']]
+        formatted_status.append(row_status)
+        index += row['count']
+    return formatted_status
+
+
 @app.route('/parkings/<parking_id>', methods=['GET'])
 def get_parking_status(parking_id):
-    status = parking_statuses.get(parking_id)
-    if status is None:
+    parking = next((p for p in parkings['parkings'] if p['id'] == parking_id), None)
+    if not parking:
         return jsonify({"error": "Parking not found"}), 404
-    return jsonify({"parking_id": parking_id, "address": parking['address'], "status": status})
+    status = parking_statuses.get(parking_id)
+    formatted_status = format_parking_status(parking, status)
+    return jsonify({"parking_id": parking_id, "address": parking['address'], "status": formatted_status})
 
 
 @app.route('/parkings', methods=['GET'])
@@ -89,4 +102,7 @@ if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True, use_reloader=False)
     for p in processes:
         p.join()
+
+
+
 
