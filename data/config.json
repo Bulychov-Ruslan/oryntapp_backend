@@ -2,7 +2,7 @@
     "parkings": [
       {
         "id": "1",
-        "video_path": "parking1.mp4",
+        "video_path": "data/parking1.mp4",
         "address": "Baitursynov 100, Almaty, Kazakhstan",
         "layout": {
           "rows": [
@@ -26,7 +26,7 @@
       },
       {
         "id": "2",
-        "video_path": "parking2.mp4",
+        "video_path": "data/parking2.mp4",
         "address": "Baitursynov 86/88, Almaty, Kazakhstan",
         "layout": {
           "rows": [
@@ -48,7 +48,7 @@
       },
       {
         "id": "3",
-        "video_path": "parking3.mp4",
+        "video_path": "data/parking3.mp4",
         "address": "KazNU 71, Almaty, Kazakhstan",
         "layout": {
           "rows": [
@@ -80,7 +80,7 @@
       },
       {
         "id": "4",
-        "video_path": "parking4.mp4",
+        "video_path": "data/parking4.mp4",
         "address": "Satbayev 22 GUK, Almaty, Kazakhstan",
         "layout": {
           "rows": [
@@ -96,7 +96,7 @@
       },
       {
         "id": "5",
-        "video_path": "parking5.mp4",
+        "video_path": "data/parking5.mp4",
         "address": "Satbayev 22 GMK, Almaty, Kazakhstan",
         "layout": {
           "rows": [

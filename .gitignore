@@ -2,4 +2,4 @@
 venv/
 
 
-yolov8s.pt
+models/yolov8s.pt
