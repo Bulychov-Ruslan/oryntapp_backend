@@ -1,6 +1,6 @@
 
 
-
+# Кітапханаларды импорттау
 from flask import Flask, jsonify
 import cv2
 import pandas as pd
@@ -11,16 +11,36 @@ from ultralytics import YOLO
 import json
 
 
-model = YOLO('models/yolov8s.pt')
+try:
+    # YOLO моделін жүктеу
+    model = YOLO('models/yolov8s.pt')
+except Exception as e:
+    print(f"Ошибка загрузки модели: {str(e)}")
+    model = None
 
-with open("data/coco.txt", "r") as file:
-    class_list = file.read().split("\n")
+try:
+    # Класстар файлын оқу
+    with open("data/coco.txt", "r") as file:
+        class_list = file.read().split("\n")
+except FileNotFoundError:
+    print("Файл классов не найден.")
+    class_list = []
+except Exception as e:
+    print(f"Ошибка при чтении файла классов: {str(e)}")
+    class_list = []
 
-
+# Автотұрақтардың мәліметтерін оқу
 with open('data/config.json', 'r') as f:
     parkings = json.load(f)
 
+# Автотұрақтардың мәліметтерін өңдеу функциясы
 def process_parking(parking, parking_statuses):
+    """
+    Белгілі бір тұрақ үшін бейне ағынын өңдейді және бос орындардың күйін жаңартады.
+    Args:
+        parking: тұрақ туралы ақпаратты қамтитын сөздік.
+        parking_statuses: тұрақ күйлерінің жалпы сөздігі.
+    """
     cap = cv2.VideoCapture(parking['video_path'])
     parking_areas = parking['areas']
     first_seen = {i: None for i in range(len(parking_areas))}
@@ -61,9 +81,19 @@ def process_parking(parking, parking_statuses):
         parking_statuses[parking['id']] = occupied
         time.sleep(1)
 
+# Flask серверін инициалдау
 app = Flask(__name__)
 
+# Автотұрақтардың мәліметтерін форматтау
 def format_parking_status(parking_config, status):
+    """
+    API арқылы көрсету үшін тұрақ орындарының күйін пішімдейді.
+    Args:
+        parking_config: тұрақ конфигурациясы.
+        status: Орындардың толтырылу күйі.
+    Returns:
+        Орындардың пішімделген күйі.
+    """
     rows = parking_config['layout']['rows']
     formatted_status = []
     index = 0
@@ -73,9 +103,18 @@ def format_parking_status(parking_config, status):
         index += row['count']
     return formatted_status
 
-
+# Автотұрақтардың мәліметтерін алу маршруты
 @app.route('/parkings/<parking_id>', methods=['GET'])
+# Автотұрақтардың мәліметтерін алу
 def get_parking_status(parking_id):
+
+    """
+    Оның идентификаторы бойынша тұрақ мәртебесін алуға арналған API әдісі.
+    Args:
+        parking_id: тұрақ идентификаторы.
+    Returns:
+        Тұрақ күйі бар JSON жауабы.
+    """
     parking = next((p for p in parkings['parkings'] if p['id'] == parking_id), None)
     if not parking:
         return jsonify({"error": "Parking not found"}), 404
@@ -83,17 +122,23 @@ def get_parking_status(parking_id):
     formatted_status = format_parking_status(parking, status)
     return jsonify({"parking_id": parking_id, "address": parking['address'], "status": formatted_status})
 
-
+# Автотұрақтардың тізімін алу маршруты
 @app.route('/parkings', methods=['GET'])
+# Автотұрақтардың тізімін алу
 def get_parkings_list():
+    """
+    Барлық тұрақтардың тізімін алуға арналған API әдісі.
+    Returns:
+        JSON тұрақтарының тізімі.
+    """
     parkings_list = [{'id': parking['id'], 'address': parking['address']} for parking in parkings['parkings']]
     return jsonify(parkings_list)
 
-
+# Flask серверін іске қосу
 if __name__ == '__main__':
     manager = multiprocessing.Manager()
     parking_statuses = manager.dict()
-
+    
     processes = []
     for parking in parkings['parkings']:
         p = multiprocessing.Process(target=process_parking, args=(parking, parking_statuses))
